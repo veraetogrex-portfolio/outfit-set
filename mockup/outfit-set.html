@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>T42 Outfit Set — the shirt onto the trousers, an outfit for Thursday</title>
+<link rel="stylesheet" href="_shared/nocturne.css">
+<link rel="stylesheet" href="../style.css">
+<style>
+  /* the whole app screen from ../, in Nocturne type; no grid on the app screen */
+  #stage{background:#07080C}
+  #stage .vc{position:absolute;left:0;top:0;--font:var(--f-text)}
+  body.autoplay #stage :focus-visible{outline:none}
+  body.autoplay #li-cursor{transition:none}   /* visible from frame one, no fade at the loop seam */
+  #li-cursor svg{transform:scale(1.5);transform-origin:4px 3px}   /* the hand stays readable in a phone-sized reel */
+  #li-cursor.down svg{transform:scale(1.3)}
+</style>
+</head>
+<body>
+<div id="stage" data-title="T42 Outfit Set" data-url="veraetogrex-portfolio.github.io/outfit-set">
+  <section class="vc" aria-label="VECTOR Closet" data-assets="../assets/"></section>
+</div>
+<script src="_shared/stage.js"></script>
+<script src="../script.js"></script>
+<script>
+const app = document.querySelector('.vc').closetApp;
+const at = sel => { const r = Stage.rect(document.querySelector(sel)); return [r.cx, r.cy]; };
+const REST = [900, 830];   // the empty floor under the saved outfits
+// one act: home → "Plan outfit" on Thursday → the shirt is carried onto the trousers → the outfit card, saved to Thursday
+Stage.init({
+  reset: () => app.reset(),
+  cursorStart: REST,
+  async demo(s) {
+    const t0 = performance.now();
+    await s.until(t0, 900);                           // the whole home screen at rest first
+    const [px, py] = at('[data-plan]');
+    await s.move([px + 30, py + 8], 650);             // Plan outfit on Thursday, the only day without an outfit; the hand under its label
+    await s.until(t0, 1950);   // the camera holds Thursday close: «Dinner at Lumi», «No outfit»
+    await s.click(null, { hold: 110 });               // → the outfit board: the shirt and the trousers side by side
+    await s.until(t0, 2850);
+    const [gx, gy] = at('[data-shirt] .vc-cloth');
+    await s.move([gx + 10, gy + 40], 600);            // onto the shirt, below its collar
+    await s.until(t0, 3600);
+    s.cursor.grab(); await s.down();                  // the shirt lifts: tilt, shadow, the coat and the loafers step back
+    await s.until(t0, 3950);
+    await s.move([gx + 302, gy + 20], 1250, { arc: .16 });   // carried over the trousers: they sink, "Top goes here" lights up
+    await s.until(t0, 5450);
+    await s.up(); s.cursor.grab(false);               // let go: shirt, trousers and loafers fold into one card, Saved to Thursday, Outfits 24
+    await s.until(t0, 5650);
+    await s.move([1000, 560], 600);                   // the hand leaves the card for the empty board under the coat
+    await s.until(t0, 10050);
+  },
+});
+</script>
+</body>
+</html>
